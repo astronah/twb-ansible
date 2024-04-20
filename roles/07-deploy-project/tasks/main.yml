@@ -39,3 +39,7 @@
   ansible.builtin.shell: docker compose exec php bin/console asset-map:compile
 - name: assets install
   ansible.builtin.shell: docker compose exec php bin/console assets:install
+- name: DB migration
+  ansible.builtin.shell: docker compose exec php bin/console doctrine:migrations:migrate -n
+- name: clear cache
+  ansible.builtin.shell: docker compose exec php bin/console cache:clear
