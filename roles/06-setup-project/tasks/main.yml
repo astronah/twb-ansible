@@ -1,0 +1,21 @@
+---
+# tasks file for 06-setup-project
+- name: Creates .ssh directory for retweets
+  ansible.builtin.file: 
+    path : "{{ home }}/.ssh"
+    state: directory
+- name: Copy ssh-key for project
+  ansible.builtin.copy:
+    src  : retweets_project.key
+    dest : "{{ home }}/.ssh/retweets_project.key"
+    mode : 0600
+    owner: retweets
+    group: docker
+- name: Clone a repo with separate git directory
+  ansible.builtin.git:
+    repo           : git@github.com:jced-artem/twitter-bot.git
+    dest           : "{{ project_home }}"
+    key_file       : "/home/retweets/.ssh/retweets_project.key"
+    accept_hostkey : true
+    clone          : yes
+    update         : yes

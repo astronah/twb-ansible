@@ -1,0 +1,8 @@
+---
+- name: Setup Dockered DBs and Queque server 
+  hosts: dbs
+  become: no
+  roles:
+    - {role: 00-ping, when: ansible_system == "Linux"}
+    - {role: 05-setup-dbs, when: ansible_system == "Linux"}
+...

@@ -1,0 +1,23 @@
+[nodes_docker]
+max-twb1 ansible_host=37.27.102.81
+max-twb2 ansible_host=37.27.102.82
+max-twb3 ansible_host=37.27.102.83
+
+[deploy]
+max-twb1 ansible_host=37.27.102.81
+max-twb2 ansible_host=37.27.102.82
+max-twb3 ansible_host=37.27.102.83
+
+[dbs]
+max-db ansible_host=94.130.217.190
+
+[nodes_old]
+max ansible_host=46.4.19.119
+
+[project:children]
+nodes_docker
+dbs
+
+[debian:children]
+nodes_old
+nodes_docker

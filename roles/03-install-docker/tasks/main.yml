@@ -1,0 +1,47 @@
+---
+# tasks file for 03-install-docker
+- name: Install a list of packages for docker_repo
+  ansible.builtin.apt:
+    update_cache: yes
+    pkg:
+    - ca-certificates 
+    - curl
+    - python3-full
+    - python3-pip
+    - python3-virtualenv
+    - python3-xyzservices
+    - python3-docker
+
+
+- name: create docker_repo_folder
+  ansible.builtin.file: 
+    path: /etc/apt/keyrings
+    state: directory
+    mode: 0755
+    
+- name: Add repo & crt
+  ansible.builtin.shell: | 
+    sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc &&
+    sudo chmod a+r /etc/apt/keyrings/docker.asc && 
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+
+- name: Install a docker
+  ansible.builtin.apt:
+    update_cache: yes
+    clean: yes
+    autoclean: yes
+    pkg:
+    - docker-ce 
+    - docker-ce-cli 
+    - containerd.io 
+    - docker-buildx-plugin 
+    - docker-compose-plugin
+    - docker-compose
+
+- name: Enable Docker service 
+  ansible.builtin.systemd_service:
+    name: docker
+    enabled: true
+    masked: no
+    state: "started"

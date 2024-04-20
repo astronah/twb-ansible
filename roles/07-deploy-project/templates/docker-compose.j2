@@ -1,0 +1,67 @@
+version: "3"
+services:
+  php:
+    build:
+      context: ./project
+      dockerfile: docker/php/Dockerfile
+    restart: always
+    volumes:
+      - ./project:/var/www/app
+    environment:
+      - PHP_IDE_CONFIG=serverName=Docker
+    extra_hosts:
+      - "mysql:94.130.217.190"
+      - "redis:94.130.217.190"
+      - "rabbitmq:94.130.217.190"    
+
+  nginx:
+    build:
+      context: ./project
+      dockerfile: docker/nginx/Dockerfile
+    restart: always
+    volumes:
+      - ./project:/var/www/app
+    ports:
+      - "8080:80"
+    extra_hosts:
+      - "mysql:94.130.217.190"
+      - "redis:94.130.217.190"
+      - "rabbitmq:94.130.217.190"
+
+  workers:
+    build:
+      context: ./project
+      dockerfile: docker/php/Dockerfile
+    entrypoint: [ "supervisord", "-c", "/etc/supervisor/supervisord.conf", "-n", "-uroot", "-s" ]
+    restart: always
+    deploy:
+      replicas: 16
+      resources:
+        limits:
+          cpus: "1"
+          memory: 3G
+        reservations:
+          cpus: "0.1"
+          memory: 256M
+    volumes:
+      - ./project:/var/www/app
+    environment:
+      - PHP_IDE_CONFIG=serverName=Docker
+      - BASE_APP_USER=root
+    extra_hosts:
+      - "mysql:94.130.217.190"
+      - "redis:94.130.217.190"
+      - "rabbitmq:94.130.217.190"
+
+  cron:
+    build:
+      context: ./project
+      dockerfile: docker/php/Dockerfile
+    entrypoint: [ "cron", "-f" ]
+    restart: always
+    volumes:
+      - ./project:/var/www/app
+    extra_hosts:
+      - "mysql:94.130.217.190"
+      - "redis:94.130.217.190"
+      - "rabbitmq:94.130.217.190"

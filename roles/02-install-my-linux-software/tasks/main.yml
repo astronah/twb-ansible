@@ -1,0 +1,11 @@
+---
+# tasks file for 02-install-my-linux-software
+- name: Install a list of packages for docker_repo
+  ansible.builtin.apt:
+    update_cache: yes
+    clean: yes
+    autoclean: yes
+    pkg:
+    - git
+    - htop
+    - vim

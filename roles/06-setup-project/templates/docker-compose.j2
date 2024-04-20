@@ -1,0 +1,42 @@
+version: "3"
+services:
+  php:
+    build:
+      context: ./project
+      dockerfile: docker/php/Dockerfile
+    restart: always
+    volumes:
+      - ./project:/var/www/app
+    ports:
+      - "9000:9000"
+    environment:
+      - PHP_IDE_CONFIG=serverName=Docker
+
+  nginx:
+    build:
+      context: ./project
+      dockerfile: docker/nginx/Dockerfile
+    restart: always
+    volumes:
+      - ./project:/var/www/app
+    ports:
+      - "8080:80"
+  workers:
+    build:
+      context: ./project
+      dockerfile: docker/php/Dockerfile
+    entrypoint: [ "supervisord", "-c", "/etc/supervisor/supervisord.conf", "-n", "-uroot", "-s" ]
+    restart: always
+    volumes:
+      - ./project:/var/www/app
+    environment:
+      - PHP_IDE_CONFIG=serverName=Docker
+      - BASE_APP_USER=root
+  cron:
+    build:
+      context: ./project
+      dockerfile: docker/php/Dockerfile
+    entrypoint: [ "cron", "-f" ]
+    restart: always
+    volumes:
+      - ./project:/var/www/app

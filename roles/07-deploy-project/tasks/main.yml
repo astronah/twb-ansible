@@ -1,0 +1,41 @@
+---
+# tasks file for 07-deploy-project
+- name: Git Pull
+  ansible.builtin.git:
+    repo                : git@github.com:jced-artem/twitter-bot.git
+    dest                : "{{ project_home }}/"
+    key_file            : "{{ home }}/.ssh/retweets_project.key"
+    clone               : no
+    update              : yes
+    accept_hostkey      : yes
+- name: Copy Docker compose template
+  ansible.builtin.template:
+    src : docker-compose.j2
+    dest: "{{ home }}/docker-compose.yml"
+    mode: '0750'
+- name: Copy .env template
+  ansible.builtin.template:
+    src : env.j2
+    dest: "{{ project_home }}/.env.local"
+    mode: '0755'
+- name: Docker compose down
+  community.docker.docker_compose:
+    project_src: "{{ home }}"
+    state: absent
+- name: Docker compose up
+  community.docker.docker_compose:
+    project_src : "{{ home }}"
+    build       : yes
+    state       : present
+  #register      : output
+#- name: Show results
+  #ansible.builtin.debug:
+  #var: output
+- name: composer install
+  ansible.builtin.shell: docker compose exec php composer install
+- name: fix dir mode
+  ansible.builtin.shell: docker compose exec php chmod 777 /var/www/app/var/cache/prod
+- name: compile install
+  ansible.builtin.shell: docker compose exec php bin/console asset-map:compile
+- name: assets install
+  ansible.builtin.shell: docker compose exec php bin/console assets:install

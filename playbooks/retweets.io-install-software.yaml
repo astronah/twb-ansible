@@ -1,0 +1,11 @@
+---
+- name: Update Server Software
+  hosts: "{{ node }}"
+  become: yes
+  
+  roles: 
+  - {role: 01-update-linux-software, when: ansible_system == "Linux"}
+  - {role: 02-install-my-linux-software, when: ansible_system == "Linux"}
+  - {role: 03-install-docker, when: ansible_system == "Linux"}
+  - {role: 04-add-docker-user, when: ansible_system == "Linux"} 
+...

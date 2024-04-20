@@ -1,0 +1,38 @@
+version: "3"
+services:
+  redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - 6381:6379
+
+  
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    restart: always
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER={{ RABBITMQ_DEFAULT_USER }}
+      - RABBITMQ_DEFAULT_PASS={{ RABBITMQ_DEFAULT_PASS }}
+
+  
+  mysql:
+    image: mysql:8
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: "4"
+          memory: 8G
+        reservations:
+          cpus: "2"
+          memory: 1G
+    ports:
+      - "3311:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD="{{ MYSQL_ROOT_PASSWORD }}"
+    volumes:
+      - ./mysql/data:/var/lib/mysql:rw
+      - ./mysql/config:/etc/mysql:ro

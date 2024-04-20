@@ -1,0 +1,7 @@
+###> vscode
+.vscode
+###> vars
+group_vars
+**/vars
+
+roles/06-setup-project/files/retweets_project.key

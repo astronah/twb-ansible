@@ -1,0 +1,30 @@
+---
+# tasks file for 05-setup-dbs
+- name: Create DBs folder
+  ansible.builtin.file:
+    path : "{{ project_home }}"
+    state: "directory"
+    mode : '0755'
+- name: Copy Docker compose Template
+  ansible.builtin.template:
+    src : docker-compose.j2
+    dest: "{{ project_home }}/docker-compose.yml"
+    mode: '0750'
+- name: Create config directory
+  ansible.builtin.file:
+    path : "{{ project_home }}/mysql/config/conf.d/"
+    state: "directory"
+    mode : '0755'
+- name: Copy MySQL config
+  ansible.builtin.copy:
+    src  : retweets.cnf
+    dest : "{{ project_home }}/mysql/config/conf.d/retweets.cnf"
+    mode : '0750'
+- name: Start DBs
+  community.docker.docker_compose:
+    project_src: "{{ project_home }}"
+  register   : output
+- name: Show results
+  ansible.builtin.debug:
+    var: output
+  

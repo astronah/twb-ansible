@@ -1,0 +1,4 @@
+---
+# tasks file for 00-ping
+- name: ping server
+  ping: 

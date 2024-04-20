@@ -1,0 +1,10 @@
+[mysqld]
+innodb_buffer_pool_size = 8GB
+innodb_log_file_size = 1GB
+innodb_flush_log_at_trx_commit = 0
+tmp_table_size = 128M
+max_heap_table_size = 128M
+wait_timeout = 600
+interactive_timeout = 600
+max_allowed_packet = 32M
+max_connections = 20000

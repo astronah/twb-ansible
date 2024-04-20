@@ -1,0 +1,8 @@
+---
+# tasks file for 04-add-docker-user
+- name: Add user for a docker projects
+  ansible.builtin.user: 
+    user: "{{ user_name }}"
+    group: docker
+    uid: 1100
+    

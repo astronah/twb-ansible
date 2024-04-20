@@ -1,0 +1,9 @@
+---
+- name: Deploy Code to docker nodes
+  hosts: nodes_docker
+  become: no
+
+  roles:
+  - {role: 00-ping, when: ansible_system == "Linux"}
+  - {role: 07-deploy-project, when: ansible_system == "Linux"} 
+...
