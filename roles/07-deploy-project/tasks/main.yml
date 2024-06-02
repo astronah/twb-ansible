@@ -27,10 +27,7 @@
     project_src : "{{ home }}"
     build       : yes
     state       : present
-  #register      : output
-#- name: Show results
-  #ansible.builtin.debug:
-  #var: output
+
 - name: composer install
   ansible.builtin.shell: docker compose exec php composer install
 - name: fix dir mode
@@ -41,5 +38,7 @@
   ansible.builtin.shell: docker compose exec php bin/console assets:install
 - name: DB migration
   ansible.builtin.shell: docker compose exec php bin/console doctrine:migrations:migrate -n
+  run_once: true
+  delegate_to: max-twb1
 - name: clear cache
   ansible.builtin.shell: docker compose exec php bin/console cache:clear
