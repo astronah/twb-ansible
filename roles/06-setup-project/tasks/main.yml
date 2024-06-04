@@ -13,7 +13,7 @@
     group: docker
 - name: Clone a repo with separate git directory
   ansible.builtin.git:
-    repo           : git@github.com:jced-artem/twitter-bot.git
+    repo           : git@github.com:astronah/twitter-bot.git
     dest           : "{{ project_home }}"
     key_file       : "/home/retweets/.ssh/retweets_project.key"
     accept_hostkey : true

@@ -2,7 +2,7 @@
 # tasks file for 07-deploy-project
 - name: Git Pull
   ansible.builtin.git:
-    repo                : git@github.com:jced-artem/twitter-bot.git
+    repo                : git@github.com:astronah/twitter-bot.git
     dest                : "{{ project_home }}/"
     key_file            : "{{ home }}/.ssh/retweets_project.key"
     clone               : no
