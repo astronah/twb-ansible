@@ -1,0 +1,14 @@
+---
+- hosts: node-exporter
+  gather_facts: false
+  remote_user: root
+  become: true
+  vars:
+    prom_node_exporter_basic_auth_user: pgauser
+    prom_node_exporter_basic_auth_enc_password: $2y$10$OmGLMuFIEpEXlRUI1cqkyeFRLQQbkTeGwg.S27yzAdWN9C9Mx5Wei
+    prom_node_exporter_config_dir: /etc/node-exporter
+    node_exporter_user: prometheus
+    node_exporter_group: prometheus
+    debian_service_config_dir: /etc/systemd/system/
+  roles:
+    - prometheus-node-exporter
