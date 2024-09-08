@@ -1,7 +1,6 @@
 ---
-- name: Test Connection 
-  hosts: "{{ node }}"
+- name: Test Connection
+  hosts: all
 
   roles:
-  - {role: 00-ping, when: ansible_system == "Linux"}
-...   
+    - {role: 00-ping, when: ansible_system == "Linux"}

@@ -1,44 +1,83 @@
 ---
 # tasks file for 07-deploy-project
-- name: Git Pull
+- name: Git pull
   ansible.builtin.git:
-    repo                : git@github.com:astronah/twitter-bot.git
-    dest                : "{{ project_home }}/"
-    key_file            : "{{ home }}/.ssh/retweets_project.key"
-    clone               : no
-    update              : yes
-    accept_hostkey      : yes
-- name: Copy Docker compose template
+    repo: git@github.com:astronah/twitter-bot.git
+    dest: "{{ project_home }}/"
+    key_file: "{{ home }}/.ssh/retweets_project.key"
+    clone: false
+    update: true
+    accept_hostkey: true
+    version: main
+
+- name: Копируем init-db.sh для clickhouse
+  ansible.builtin.copy:
+    src: "init-db.sh"
+    dest: "{{ home }}/init-click-db.sh"
+    mode: "0700"
+    owner: "{{ user }}"
+  tags:
+    - local
+    - dev
+
+- name: Copy Docker compose template for prod
   ansible.builtin.template:
-    src : docker-compose.j2
+    src: docker-compose.j2
     dest: "{{ home }}/docker-compose.yml"
     mode: '0750'
+  tags:
+    - prod
+
+- name: Copy Docker compose template for dev & local
+  ansible.builtin.template:
+    src: docker-compose-dev.j2
+    dest: "{{ home }}/docker-compose.yml"
+    mode: '0750'
+  tags:
+    - local
+    - dev
+
 - name: Copy .env template
   ansible.builtin.template:
-    src : env.j2
+    src: env.j2
     dest: "{{ project_home }}/.env.local"
     mode: '0755'
+
 - name: Docker compose down
   community.docker.docker_compose:
     project_src: "{{ home }}"
     state: absent
+
 - name: Docker compose up
   community.docker.docker_compose:
-    project_src : "{{ home }}"
-    build       : yes
-    state       : present
+    project_src: "{{ home }}"
+    build: true
+    state: present
 
-- name: composer install
+- name: Composer install
   ansible.builtin.shell: docker compose exec php composer install
-- name: fix dir mode
+
+- name: Fix dir mode
   ansible.builtin.shell: docker compose exec php chmod 777 /var/www/app/var/cache/prod
-- name: compile install
+
+- name: Compile install
   ansible.builtin.shell: docker compose exec php bin/console asset-map:compile
-- name: assets install
+
+- name: Assets install
   ansible.builtin.shell: docker compose exec php bin/console assets:install
-- name: DB migration
+
+- name: DB migration prod
   ansible.builtin.shell: docker compose exec php bin/console doctrine:migrations:migrate -n
   run_once: true
   delegate_to: max-twb1
-- name: clear cache
+  tags:
+    - prod
+
+- name: DB migration dev & local
+  ansible.builtin.shell: docker compose exec php bin/console doctrine:migrations:migrate -n
+  tags:
+    - local
+    - dev
+
+- name: Clear cache
   ansible.builtin.shell: docker compose exec php bin/console cache:clear

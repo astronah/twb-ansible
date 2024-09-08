@@ -2,6 +2,7 @@
 - name: Deploy Code to docker nodes
   hosts: deploy-prod
   become: false
+
   roles:
     - {role: 00-ping, when: ansible_system == "Linux"}
-    - {role: 06-setup-project, when: ansible_system == "Linux"}
+    - {role: 07-deploy-project, when: ansible_system == "Linux"}
