@@ -1,2 +1,14 @@
 ---
 # defaults file for 07-deploy-project
+version: master
+stage: prod
+SSH_KEY: id_ed25519
+home: "/home/retweets"
+user: retweets
+project_home: "/home/retweets/project"
+RABBITMQ_DEFAULT_USER: rabbituser
+RABBITMQ_DEFAULT_PASS: rabbitpassword
+MYSQL_USER: retweets
+MYSQL_DB: retweets
+MYSQL_PASSWORD: mysqlpassword
+MYSQL_ROOT_PASSWORD: mysqlrootpassword

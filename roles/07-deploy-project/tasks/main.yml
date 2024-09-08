@@ -1,14 +1,13 @@
 ---
-# tasks file for 07-deploy-project
 - name: Git pull
   ansible.builtin.git:
     repo: git@github.com:astronah/twitter-bot.git
     dest: "{{ project_home }}/"
     key_file: "{{ home }}/.ssh/retweets_project.key"
-    clone: false
+    clone: true
     update: true
     accept_hostkey: true
-    version: main
+    version: "{{ version }}"
 
 - name: Копируем init-db.sh для clickhouse
   ansible.builtin.copy:
@@ -16,26 +15,27 @@
     dest: "{{ home }}/init-click-db.sh"
     mode: "0700"
     owner: "{{ user }}"
-  tags:
-    - local
-    - dev
+  when: stage == "dev"
 
-- name: Copy Docker compose template for prod
-  ansible.builtin.template:
-    src: docker-compose.j2
-    dest: "{{ home }}/docker-compose.yml"
-    mode: '0750'
-  tags:
-    - prod
+- name: Create config directory
+  ansible.builtin.file:
+    path: "{{ home }}/mysql/config/conf.d/"
+    state: "directory"
+    mode: '0755'
+  when: stage == "dev"
 
-- name: Copy Docker compose template for dev & local
-  ansible.builtin.template:
-    src: docker-compose-dev.j2
-    dest: "{{ home }}/docker-compose.yml"
+- name: Copy MySQL config
+  ansible.builtin.copy:
+    src: retweets.cnf
+    dest: "{{ home }}/mysql/config/conf.d/retweets.cnf"
     mode: '0750'
-  tags:
-    - local
-    - dev
+  when: stage == "dev"
+
+- name: Copy Docker compose template
+  ansible.builtin.template:
+    src: "docker-compose-{{stage}}.j2"
+    dest: "{{ home }}/docker-compose.yml"
+    mode: "0750"
 
 - name: Copy .env template
   ansible.builtin.template:
@@ -44,21 +44,21 @@
     mode: '0755'
 
 - name: Docker compose down
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ home }}"
     state: absent
 
 - name: Docker compose up
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ home }}"
-    build: true
+    build: always
     state: present
 
 - name: Composer install
   ansible.builtin.shell: docker compose exec php composer install
 
 - name: Fix dir mode
-  ansible.builtin.shell: docker compose exec php chmod 777 /var/www/app/var/cache/prod
+  ansible.builtin.shell: "docker compose exec php chmod 777 /var/www/app/var/cache/{{stage}}"
 
 - name: Compile install
   ansible.builtin.shell: docker compose exec php bin/console asset-map:compile
@@ -70,14 +70,11 @@
   ansible.builtin.shell: docker compose exec php bin/console doctrine:migrations:migrate -n
   run_once: true
   delegate_to: max-twb1
-  tags:
-    - prod
+  when: stage != "dev"
 
 - name: DB migration dev & local
   ansible.builtin.shell: docker compose exec php bin/console doctrine:migrations:migrate -n
-  tags:
-    - local
-    - dev
+  when: stage == "dev"
 
 - name: Clear cache
   ansible.builtin.shell: docker compose exec php bin/console cache:clear

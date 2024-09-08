@@ -1,0 +1,28 @@
+- name: Deploy Code to dev-stage
+  hosts: deploy_dev
+  become: false
+  port: 22822
+  remote_user: retweets-dev
+  vars:
+    stage: dev
+    app_debug: 1
+    SSH_KEY: id_ed25519
+    version: clickhouse # git branch
+    home: "/home/retweets-dev"
+    user: retweets-dev
+    project_home: "/home/retweets-dev/project"
+    RABBITMQ_DEFAULT_USER: rabbituser
+    RABBITMQ_DEFAULT_PASS: rabbitpassword
+    MYSQL_USER: retweets
+    MYSQL_DB: retweets
+    MYSQL_PASSWORD: mysqlpassword
+    MYSQL_ROOT_PASSWORD: mysqlrootpassword
+    clickhouse_host: clickhouse
+    clickhouse_port: 8123
+    clickhoise_username: root
+    clickhouse_password: 123456
+    clickhouse_database: default
+  tasks:
+    - name: Deploy dev
+      ansible.builtin.import_role:
+        name: 07-deploy-project
