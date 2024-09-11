@@ -1,11 +1,11 @@
 services:
   php:
     build:
-      context: ./{{ project_home }}
+      context: {{ project_home }}
       dockerfile: docker/php/Dockerfile
     restart: always
     volumes:
-      - ./{{ project_home }}:/var/www/app
+      - {{ project_home }}:/var/www/app
     environment:
       - PHP_IDE_CONFIG=serverName=Docker
     networks:
@@ -17,11 +17,11 @@ services:
 
   nginx:
     build:
-      context: ./{{ project_home }}
+      context: {{ project_home }}
       dockerfile: docker/nginx/Dockerfile
     restart: always
     volumes:
-      - ./{{ project_home }}:/var/www/app
+      - {{ project_home }}:/var/www/app
     ports:
       - "8080:80"
     networks:
@@ -31,7 +31,7 @@ services:
       
   workers:
     build:
-      context: ./{{ project_home }}
+      context: {{ project_home }}
       dockerfile: docker/php/Dockerfile
     entrypoint: [ "supervisord", "-c", "/etc/supervisor/supervisord.conf", "-n", "-uroot", "-s" ]
     restart: always
@@ -45,7 +45,7 @@ services:
           cpus: "0.1"
           memory: 256M
     volumes:
-      - ./{{ project_home }}:/var/www/app
+      - {{ project_home }}:/var/www/app
     environment:
       - PHP_IDE_CONFIG=serverName=Docker
       - BASE_APP_USER=root
@@ -56,12 +56,12 @@ services:
 
   cron:
     build:
-      context: ./{{ project_home }}
+      context: {{ project_home }}
       dockerfile: docker/php/Dockerfile
     entrypoint: [ "cron", "-f" ]
     restart: always
     volumes:
-      - ./{{ project_home }}:/var/www/app
+      - {{ project_home }}:/var/www/app
     networks:
       - retweets-dev
     depends_on: 
