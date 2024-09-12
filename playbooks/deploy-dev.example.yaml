@@ -13,6 +13,7 @@
     project_home: "/home/retweets-dev/project"
     RABBITMQ_DEFAULT_USER: rabbituser
     RABBITMQ_DEFAULT_PASS: rabbitpassword
+    rabbitmqport: 5672
     MYSQL_USER: retweets
     MYSQL_DB: retweets
     MYSQL_PASSWORD: mysqlpassword
