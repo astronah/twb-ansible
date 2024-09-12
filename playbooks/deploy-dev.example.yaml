@@ -18,6 +18,7 @@
     MYSQL_DB: retweets
     MYSQL_PASSWORD: mysqlpassword
     MYSQL_ROOT_PASSWORD: mysqlrootpassword
+    mysql_port: 3306
     clickhouse_host: clickhouse
     clickhouse_port: 8123
     clickhoise_username: root
