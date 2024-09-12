@@ -7,3 +7,5 @@ group_vars
 roles/06-setup-project/files/retweets_project.key
 
 /playbooks/deploy-dev.yaml
+/playbooks/prod-deploy.yaml
+
