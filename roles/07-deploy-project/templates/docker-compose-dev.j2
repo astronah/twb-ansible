@@ -116,6 +116,11 @@ services:
       - ./mysql/config:/etc/mysql:ro
     networks:
       - retweets-dev
+    cap_add:
+      - SYS_NICE
+      - NET_ADMIN
+      - IPC_LOCK
+      - SYS_PTRACE
 
 networks:
   retweets-dev:
