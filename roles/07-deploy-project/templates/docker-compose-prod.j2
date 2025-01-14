@@ -11,7 +11,8 @@ services:
     extra_hosts:
       - "mysql:94.130.217.190"
       - "redis:94.130.217.190"
-      - "rabbitmq:94.130.217.190"    
+      - "rabbitmq:94.130.217.190"
+      - "clickhouse:94.130.217.190"   
 
   nginx:
     build:
@@ -26,6 +27,7 @@ services:
       - "mysql:94.130.217.190"
       - "redis:94.130.217.190"
       - "rabbitmq:94.130.217.190"
+      - "clickhouse:94.130.217.190"
 
   workers:
     build:
@@ -51,6 +53,7 @@ services:
       - "mysql:94.130.217.190"
       - "redis:94.130.217.190"
       - "rabbitmq:94.130.217.190"
+      - "clickhouse:94.130.217.190"
 
   cron:
     build:
@@ -64,3 +67,4 @@ services:
       - "mysql:94.130.217.190"
       - "redis:94.130.217.190"
       - "rabbitmq:94.130.217.190"
+      - "clickhouse:94.130.217.190"
