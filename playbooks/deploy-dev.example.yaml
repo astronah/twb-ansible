@@ -22,7 +22,7 @@
     mysql_port: 3306
     clickhouse_host: clickhouse
     clickhouse_port: 8123
-    clickhoise_username: root
+    clickhouse_username: root
     clickhouse_password: 123456
     clickhouse_database: default
   tasks:
