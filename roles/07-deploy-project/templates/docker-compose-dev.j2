@@ -72,7 +72,7 @@ services:
     restart: always
     environment:
       - CLICKHOUSE_DB={{ clickhouse_database }}
-      - CLICKHOUSE_USER={{ clickhoise_username }}
+      - CLICKHOUSE_USER={{ clickhouse_username }}
       - CLICKHOUSE_PASSWORD={{ clickhouse_password }}
     volumes: 
       - ./clickhouse:/var/lib/clickhouse/
